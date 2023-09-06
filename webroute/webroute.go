@@ -7,6 +7,6 @@ import (
 )
 
 func SetRoute(r *mux.Router) {
-	r.HandleFunc("/upload/image", controller.Upload).Methods("POST")
-	r.HandleFunc("/extract/image/{imageName}", controller.Extract).Methods("GET")
+	r.HandleFunc("/api/siss/upload/image", controller.Upload).Methods("POST")
+	r.HandleFunc("/api/siss/extract/image/{imageName}", controller.Extract).Methods("GET")
 }
