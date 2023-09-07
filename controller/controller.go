@@ -78,8 +78,6 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// Error 발견
-// 없는 이미지 신청하면 200 뜸
 func Extract(w http.ResponseWriter, r *http.Request) {
 
 	pathValues := mux.Vars(r)
@@ -101,7 +99,7 @@ func Extract(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, image := range images {
-
+		fmt.Println(imageName, "==", image.Name())
 		if imageName == image.Name() {
 
 			openImage, err := os.Open(IMAGE_STORAGE_PATH + "/" + image.Name())
@@ -124,5 +122,8 @@ func Extract(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
+	renderer.JSON(w, http.StatusNotFound, JSONM{
+		"error": "no image",
+	})
 
 }
