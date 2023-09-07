@@ -18,7 +18,7 @@ const IMAGE_STORAGE_PATH = FILE_STORAGE_PATH + "/" + "images"
 
 var renderer *render.Render = render.New()
 
-type JSONM map[string]string
+type JSONM map[string]any
 
 func Upload(w http.ResponseWriter, r *http.Request) {
 	// Form 20MB 제한
@@ -28,7 +28,9 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 	file, handler, err := r.FormFile("image")
 	if err != nil {
 		renderer.JSON(w, http.StatusNotFound, JSONM{
-			"error": "can't found file in from",
+
+			"httpStatus":  http.StatusNotFound,
+			"description": "image is not in a recognized format",
 		})
 		return
 	}
@@ -52,7 +54,8 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE /*쓰기 전용 파일과, 없으면 만든다.*/, 0666)
 	if err != nil {
 		renderer.JSON(w, http.StatusInternalServerError, JSONM{
-			"error": "no open file from backend",
+			"httpStatus":  http.StatusInternalServerError,
+			"description": "no open file from backend",
 		})
 		return
 	}
@@ -61,25 +64,30 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 	// 저장
 	if _, err = io.Copy(f, file); err != nil {
 		renderer.JSON(w, http.StatusInternalServerError, JSONM{
-			"error": "can't create image",
+			"httpStatus":  http.StatusInternalServerError,
+			"description": "can't create image",
 		})
 		return
 	}
 
 	// Is ok~
 	renderer.JSON(w, http.StatusOK, JSONM{
-		"status": "success to image upload",
-		"ident":  strings.TrimPrefix(filePath, IMAGE_STORAGE_PATH+"/"),
+		"httpStatus":  http.StatusOK,
+		"description": "success to image upload",
+		"ident":       strings.TrimPrefix(filePath, IMAGE_STORAGE_PATH+"/"),
 	})
 }
 
+// Error 발견
+// 없는 이미지 신청하면 200 뜸
 func Extract(w http.ResponseWriter, r *http.Request) {
 
 	pathValues := mux.Vars(r)
 	imageName, isExist := pathValues["imageName"]
 	if isExist == false {
 		renderer.JSON(w, http.StatusNotFound, JSONM{
-			"error": "can't found path value (/extract/image/{imageName})",
+			"httpStatus":  http.StatusNotFound,
+			"description": "can't found file in from",
 		})
 		return
 	}
