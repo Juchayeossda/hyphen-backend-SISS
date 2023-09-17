@@ -2,14 +2,17 @@ package main
 
 import (
 	"file-sever/webroute"
-	"net/http"
 	"log"
+	"net/http"
+
 	"github.com/gorilla/mux"
 )
+
+const PORT = ":8083"
 
 func main() {
 	router := mux.NewRouter()
 	webroute.SetRoute(router)
-	log.Println("[8083] SISS start")
-	http.ListenAndServe(":8083", router)
+	log.Println(PORT, "is started")
+	http.ListenAndServe(PORT, router)
 }

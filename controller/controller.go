@@ -53,6 +53,7 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 	// 파일 저장을 위해 사전 준비
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE /*쓰기 전용 파일과, 없으면 만든다.*/, 0666)
 	if err != nil {
+		fmt.Println(err)
 		renderer.JSON(w, http.StatusInternalServerError, JSONM{
 			"httpStatus":  http.StatusInternalServerError,
 			"description": "no open file from backend",
