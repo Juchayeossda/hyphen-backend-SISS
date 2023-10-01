@@ -7,7 +7,6 @@ import (
 	"hyphen-backend-SISS/repository"
 	"hyphen-backend-SISS/system/exception"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -26,29 +25,23 @@ func (repository *imageRepositoryImpl) Insert(ctx context.Context, image entity.
 	return image
 }
 
-func (repository *imageRepositoryImpl) FindByUUID(ctx context.Context, uuid uuid.UUID) (entity.Image, error) {
+func (repository *imageRepositoryImpl) FindByID(ctx context.Context, id string) (entity.Image, error) {
 	var image entity.Image
-	result := repository.DB.WithContext(ctx).Unscoped().Where("image_uuid = ?", uuid).First(&image)
-	if result.RowsAffected == 0 {
+	err := repository.DB.WithContext(ctx).Unscoped().Where("image_id = ?", id).First(&image).Error
+	if err != nil {
 		return entity.Image{}, errors.New("image not found")
 	}
 	return image, nil
 }
 
-func (repository *imageRepositoryImpl) UpdateByUUID(ctx context.Context, uuid uuid.UUID) (entity.Image, error) {
-	var image entity.Image
-	err := repository.DB.WithContext(ctx).Where("product_uuid = ?", uuid).Updates(&image).Error
-	if err != nil {
-		return entity.Image{}, errors.New("image not update")
-	}
-	return image, nil
+func (repository *imageRepositoryImpl) Update(ctx context.Context, image entity.Image) entity.Image {
+	err := repository.DB.WithContext(ctx).Where("image_id = ?", image.ID).Updates(&image).Error
+	exception.PanicLogging(err)
+	return image
 }
 
-func (repository *imageRepositoryImpl) DeleteByUUID(ctx context.Context, uuid uuid.UUID) error {
-	var image entity.Image
-	err := repository.DB.WithContext(ctx).Where("image_uuid = ?", uuid).Delete(&image).Error
-	if err != nil {
-		return errors.New("image not delete")
-	}
-	return nil
+func (repository *imageRepositoryImpl) Delete(ctx context.Context, image entity.Image) {
+	err := repository.DB.WithContext(ctx).Where("image_id = ?", image.ID).Delete(&image).Error
+	exception.PanicLogging(err)
+
 }

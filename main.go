@@ -23,7 +23,7 @@ func main() {
 
 	imageController := controller.NewImageController(&imageService)
 
-	app := fiber.New()
+	app := fiber.New(initializer.NewFiberConfiguration())
 	app.Use(recover.New())
 	app.Use(cors.New())
 

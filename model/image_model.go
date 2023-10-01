@@ -10,3 +10,7 @@ type ImageModel struct {
 	ID    uuid.UUID
 	Image *multipart.FileHeader `form:"image" validate:"multipart-file-image"`
 }
+
+type ImageReadModel struct {
+	ImageData []byte
+}
