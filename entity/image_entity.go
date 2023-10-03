@@ -6,7 +6,7 @@ import (
 
 type Image struct {
 	ID        uuid.UUID `gorm:"primaryKey;  column:image_id;        type:varchar(36)"`
-	ImageData []byte    `gorm:"not null;    column:image_data;  type:BLOB"`
+	ImageData []byte    `gorm:"not null;    column:image_data;  type:MEDIUMBLOB" `
 }
 
 func (Image) TableName() string {

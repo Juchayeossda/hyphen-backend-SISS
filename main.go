@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"hyphen-backend-SISS/controller"
 	"hyphen-backend-SISS/system"
 	"hyphen-backend-SISS/system/initializer"
@@ -13,7 +15,16 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
+var port = `:8080`
+
+func init() {
+	portPtr := flag.Int("p", 8080, "Enter the port")
+	flag.Parse()
+	port = fmt.Sprintf(":%d", *portPtr)
+}
+
 func main() {
+
 	config := system.NewConfig()
 	database := initializer.NewDatabase(config)
 
@@ -29,6 +40,6 @@ func main() {
 
 	imageController.Route(app)
 
-	app.Listen(":9190")
+	app.Listen(port)
 
 }

@@ -18,7 +18,7 @@ func NewImageController(imageService *service.ImageService) *ImageController {
 }
 
 func (controller ImageController) Route(app *fiber.App) {
-	app.Post("/api/siss/storage/images/image", controller.Create)
+	app.Post("/api/siss/storages/images/image", controller.Create)
 	app.Get("/api/siss/storages/images/:image_id", controller.FindByID)
 	app.Put("/api/siss/storages/images/:image_id", controller.Update)
 	app.Delete("/api/siss/storages/images/:image_id", controller.Delete)
@@ -48,8 +48,16 @@ func (controller *ImageController) FindByID(c *fiber.Ctx) error {
 func (controller *ImageController) Update(c *fiber.Ctx) error {
 	var request model.ImageModel
 
+	// TODO: change logic
 	imageID, err := uuid.Parse(c.Params("image_id"))
-	exception.PanicLogging(err)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
+			Code:    400,
+			Message: "Bad Request",
+			Data:    err.Error(),
+		})
+	}
+
 	request.ID = imageID
 
 	request.Image, err = c.FormFile("multipart-file-image")

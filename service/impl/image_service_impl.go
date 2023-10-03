@@ -39,7 +39,11 @@ func (service *ImageServiceImpl) Create(ctx context.Context, imageModel model.Im
 
 func (service *ImageServiceImpl) FindByID(ctx context.Context, id string) model.ImageReadModel {
 	entityImage, err := service.ImageRepository.FindByID(ctx, id)
-	exception.PanicLogging(err)
+	if err != nil {
+		panic(exception.NotFoundError{
+			Message: err.Error(),
+		})
+	}
 	return model.ImageReadModel{ImageData: entityImage.ImageData}
 
 }

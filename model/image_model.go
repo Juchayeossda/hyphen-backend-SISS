@@ -7,8 +7,8 @@ import (
 )
 
 type ImageModel struct {
-	ID    uuid.UUID
-	Image *multipart.FileHeader `form:"image" validate:"multipart-file-image"`
+	ID    uuid.UUID             `json:"id"`
+	Image *multipart.FileHeader `form:"image" validate:"multipart-file-image" json:"image"`
 }
 
 type ImageReadModel struct {
