@@ -8,8 +8,8 @@ import (
 )
 
 type ImageService interface {
-	Create(ctx context.Context, model model.ImageModel) model.ImageModel
+	Create(ctx context.Context, imageModel model.ImageModel) model.ImageCreateUpdateReturnModel
 	FindByID(ctx context.Context, id string) model.ImageReadModel
-	Update(ctx context.Context, imageModel model.ImageModel) model.ImageModel
+	Update(ctx context.Context, imageModel model.ImageModel) model.ImageCreateUpdateReturnModel
 	Delete(ctx context.Context, id uuid.UUID)
 }

@@ -6,7 +6,6 @@ import (
 	"hyphen-backend-SISS/model"
 	"hyphen-backend-SISS/repository"
 	"hyphen-backend-SISS/service"
-	"hyphen-backend-SISS/system/common"
 	"hyphen-backend-SISS/system/exception"
 	"io"
 
@@ -21,8 +20,7 @@ func NewImageService(imageRepository *repository.ImageRepository) service.ImageS
 	return &ImageServiceImpl{ImageRepository: *imageRepository}
 }
 
-func (service *ImageServiceImpl) Create(ctx context.Context, imageModel model.ImageModel) model.ImageModel {
-	common.Validate(imageModel)
+func (service *ImageServiceImpl) Create(ctx context.Context, imageModel model.ImageModel) model.ImageCreateUpdateReturnModel {
 
 	imageEntity := entity.Image{
 		ID:        uuid.New(),
@@ -32,9 +30,7 @@ func (service *ImageServiceImpl) Create(ctx context.Context, imageModel model.Im
 	// insert
 	service.ImageRepository.Insert(ctx, imageEntity)
 
-	// sync model value or entity value
-	imageModel.ID = imageEntity.ID
-	return imageModel
+	return model.ImageCreateUpdateReturnModel{ID: imageEntity.ID}
 }
 
 func (service *ImageServiceImpl) FindByID(ctx context.Context, id string) model.ImageReadModel {
@@ -48,8 +44,7 @@ func (service *ImageServiceImpl) FindByID(ctx context.Context, id string) model.
 
 }
 
-func (service *ImageServiceImpl) Update(ctx context.Context, imageModel model.ImageModel) model.ImageModel {
-	common.Validate(imageModel)
+func (service *ImageServiceImpl) Update(ctx context.Context, imageModel model.ImageModel) model.ImageCreateUpdateReturnModel {
 
 	imageEntity := entity.Image{
 		ID:        imageModel.ID,
@@ -58,7 +53,8 @@ func (service *ImageServiceImpl) Update(ctx context.Context, imageModel model.Im
 
 	// update
 	service.ImageRepository.Update(ctx, imageEntity)
-	return imageModel
+
+	return model.ImageCreateUpdateReturnModel{ID: imageEntity.ID}
 
 }
 

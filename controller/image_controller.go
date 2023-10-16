@@ -18,20 +18,23 @@ func NewImageController(imageService *service.ImageService) *ImageController {
 }
 
 func (controller ImageController) Route(app *fiber.App) {
-	app.Post("/api/siss/storages/images/image", controller.Create)
-	app.Get("/api/siss/storages/images/:image_id", controller.FindByID)
-	app.Put("/api/siss/storages/images/:image_id", controller.Update)
-	app.Delete("/api/siss/storages/images/:image_id", controller.Delete)
+	app.Post("/api/siss/images/image", controller.Create)
+	app.Get("/api/siss/images/:image_id", controller.FindByID)
+	app.Put("/api/siss/images/:image_id", controller.Update)
+	app.Delete("/api/siss/images/:image_id", controller.Delete)
 }
 
 func (controller *ImageController) Create(c *fiber.Ctx) error {
-	var request model.ImageModel
+	var clientRequest model.ImageModel
 	var err error
 
-	request.Image, err = c.FormFile("multipart-file-image")
+	err = c.BodyParser(&clientRequest)
 	exception.PanicLogging(err)
 
-	response := controller.ImageService.Create(c.Context(), request)
+	clientRequest.Image, err = c.FormFile("image")
+	exception.PanicLogging(err)
+
+	response := controller.ImageService.Create(c.Context(), clientRequest)
 
 	return c.Status(fiber.StatusCreated).JSON(model.GeneralResponse{
 		Code:    201,
@@ -47,28 +50,20 @@ func (controller *ImageController) FindByID(c *fiber.Ctx) error {
 
 func (controller *ImageController) Update(c *fiber.Ctx) error {
 	var request model.ImageModel
+	var err error
 
-	// TODO: change logic
-	imageID, err := uuid.Parse(c.Params("image_id"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(model.GeneralResponse{
-			Code:    400,
-			Message: "Bad Request",
-			Data:    err.Error(),
-		})
-	}
-
-	request.ID = imageID
-
-	request.Image, err = c.FormFile("multipart-file-image")
+	request.ID, err = uuid.Parse(c.Params("image_id"))
 	exception.PanicLogging(err)
 
-	response := controller.ImageService.Update(c.Context(), request)
+	request.Image, err = c.FormFile("image")
+	exception.PanicLogging(err)
+
+	controller.ImageService.Update(c.Context(), request)
 
 	return c.Status(fiber.StatusOK).JSON(model.GeneralResponse{
 		Code:    200,
 		Message: "Success",
-		Data:    response,
+		Data:    nil,
 	})
 }
 
